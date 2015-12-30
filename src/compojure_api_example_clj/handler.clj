@@ -17,7 +17,7 @@
             :description "Compojure Api example"}
      :tags [{:name "hello", :description "says hello to the world"}
             {:name "echo", :description "request echoes"}
-            {:name "posts", :description "worst blog ever"}]})
+            {:name "posts", :description "worst blogging app ever"}]})
 
   (context* "/hello" []
     :tags ["hello"]
@@ -41,7 +41,7 @@
   (context* "/posts" []
     :tags ["posts"]
 
-   (GET* "/" []
+    (GET* "/" []
       :summary "Get all posts"
       :swagger {:responses {200 {:schema [Post]}}}
       (ok (post/get-posts)))
@@ -55,6 +55,11 @@
       :summary "Adds a post"
       :body [post NewPost {:description "new post"}]
       (ok (post/add post)))
+
+    (PUT* "/" []
+      :summary "Updates a post"
+      :body [post Post]
+      (ok (post/update post)))
 
     (DELETE* "/:id" []
       :path-params [id :- String]
