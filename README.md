@@ -1,6 +1,6 @@
 # compojure-api-example-clj
 
-FIXME
+Simple Clojure API using compojure-api and MongoDB.
 
 ## Usage
 
