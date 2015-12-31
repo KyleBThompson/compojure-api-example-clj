@@ -26,7 +26,7 @@
     post))
 
 (defn update [post]
-	(println (str "Post ID is: " (:_id post)))
+  (println (str "Post ID is: " (:_id post)))
   (let [id (ObjectId. (:_id post))]
     (mc/update-by-id db "posts" id (assoc post :_id id))
     post))

@@ -10,18 +10,28 @@
 
 (s/defschema Message {:message String})
 
+(defn wrap-exception-handling
+  [handler]
+  (fn [request]
+    (try
+      (handler request)
+      (catch Exception e
+        {:status 400 :body (.getMessage e)}))))
+
 (defapi app
+  (middlewares [wrap-exception-handling]
   (swagger-ui)
   (swagger-docs
     {:info {:title "Compojure-api-example-clj"
             :description "Compojure Api example"}
      :tags [{:name "hello", :description "says hello to the world"}
             {:name "echo", :description "request echoes"}
-            {:name "posts", :description "worst blogging app ever"}]})
+            {:name "posts", :description "worst blogging app api ever"}]})
 
   (context* "/hello" []
     :tags ["hello"]
 
+    (GET* "/boom" [] (throw (RuntimeException. "Something blew up")))
     (GET* "/" []
       :return Message
       :summary "say hello world"
@@ -64,4 +74,4 @@
     (DELETE* "/:id" []
       :path-params [id :- String]
       :summary "Deletes a post"
-      (ok (post/delete id)))))  
+      (ok (post/delete id))))))  
