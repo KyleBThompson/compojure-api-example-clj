@@ -2,6 +2,7 @@
   (:require [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
             [schema.core :as s]
+            [compojure-api-example-clj.core :as core]
             [compojure-api-example-clj.post :as post :refer :all]
             [cheshire.generate :refer [add-encoder encode-str]]))
 
@@ -10,28 +11,20 @@
 
 (s/defschema Message {:message String})
 
-(defn wrap-exception-handling
-  [handler]
-  (fn [request]
-    (try
-      (handler request)
-      (catch Exception e
-        {:status 400 :body (.getMessage e)}))))
-
 (defapi app
-  (middlewares [wrap-exception-handling]
+  (middlewares [core/wrap-exception-handling]
   (swagger-ui)
   (swagger-docs
     {:info {:title "Compojure-api-example-clj"
             :description "Compojure Api example"}
      :tags [{:name "hello", :description "says hello to the world"}
             {:name "echo", :description "request echoes"}
-            {:name "posts", :description "worst blogging app api ever"}]})
+            {:name "posts", :description "worst blogging app api ever"}
+            {:name "exception", :description "throw an exception"}]})
 
   (context* "/hello" []
     :tags ["hello"]
 
-    (GET* "/boom" [] (throw (RuntimeException. "Something blew up")))
     (GET* "/" []
       :return Message
       :summary "say hello world"
@@ -39,9 +32,6 @@
 
   (context* "/echo" []
     :tags ["echo"]
-
-    (GET* "/request" req
-      (ok (dissoc req :body)))
 
     (GET* "/hello" []
       :return String
@@ -74,4 +64,10 @@
     (DELETE* "/:id" []
       :path-params [id :- String]
       :summary "Deletes a post"
-      (ok (post/delete id))))))  
+      (ok (post/delete id))))
+
+  (context* "/exception" []
+    :tags ["exception"]
+
+    (GET* "/boom" [] 
+      (throw (RuntimeException. "Something blew up"))))))  
