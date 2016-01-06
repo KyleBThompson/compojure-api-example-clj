@@ -2,7 +2,7 @@
 
 Simple Clojure REST API with MongoDB.
 
-Libraries
+###Libraries
 
 - Ring (Http requests, responses, etc..)
 - Compojure (routing)
