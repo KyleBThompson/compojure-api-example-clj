@@ -6,7 +6,6 @@
             [compojure-api-example-clj.post :as post :refer :all]
             [cheshire.generate :refer [add-encoder encode-str]]))
 
-(add-encoder java.lang.Class encode-str) 
 (add-encoder org.bson.types.ObjectId encode-str)
 
 (s/defschema Message {:message String})
@@ -23,7 +22,7 @@
             {:name "exception", :description "throw an exception"}]})
 
   (context* "/hello" []
-    :tags ["hello"]
+    :tags ["_hello"]
 
     (GET* "/" []
       :return Message
@@ -53,18 +52,20 @@
 
     (POST* "/" []
       :summary "Adds a post"
+      :return PostId
       :body [post NewPost {:description "new post"}]
-      (ok (post/add post)))
+      (ok (post/add! post)))
 
     (PUT* "/" []
       :summary "Updates a post"
+      :return Post
       :body [post Post]
-      (ok (post/update post)))
+      (ok (post/update! post)))
 
     (DELETE* "/:id" []
       :path-params [id :- String]
       :summary "Deletes a post"
-      (ok (post/delete id))))
+      (ok (post/delete! id))))
 
   (context* "/exception" []
     :tags ["exception"]
