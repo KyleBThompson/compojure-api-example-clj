@@ -15,14 +15,30 @@
   (def conn (mg/connect))
   (def db   (mg/get-db conn name)))
 
-(defn get-posts []
+(defn to-resource [post]
+  (select-keys post [:_id :title :body :publish]))
+
+(defn to-resource-list [posts]
+  (map to-resource posts))
+
+(defn get-posts0 []
   (let [posts (mc/find-maps db "posts" {})]
     (println posts)
   posts))
 
-(defn get-post [id]
+(defn get-posts []
+  (let [posts (mc/find-maps db "posts" {})]
+    (println posts)
+  (to-resource-list  posts)))
+
+(defn get-post0 [id]
   (let [object-id (ObjectId. id)]
   (mc/find-one-as-map db "posts" { :_id object-id })))
+
+(defn get-post [id]
+  (let [object-id (ObjectId. id)
+        post (mc/find-one-as-map db "posts" { :_id object-id })]
+  (to-resource post)))
 
 (defn add! [post]
   (let [id (ObjectId.)]

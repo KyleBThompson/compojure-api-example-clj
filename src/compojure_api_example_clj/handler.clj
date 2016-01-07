@@ -11,7 +11,7 @@
 (s/defschema Message {:message String})
 
 (defapi app
-  (middlewares [core/wrap-exception-handling]
+  (middlewares [core/wrap-exception-handling])
   (swagger-ui)
   (swagger-docs
     {:info {:title "Compojure-api-example-clj"
@@ -71,4 +71,4 @@
     :tags ["exception"]
 
     (GET* "/boom" [] 
-      (throw (RuntimeException. "Something blew up"))))))  
+      (throw (RuntimeException. "Something blew up")))))  

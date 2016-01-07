@@ -6,12 +6,12 @@ Simple Clojure REST API with MongoDB.
 
 - Ring (Http requests, responses, etc..)
 - Compojure (routing)
-- Monger (MongoDB library)
-- Cheshire (JSON serializaton) 
 - Compojure-Api ("Stuff on top of Compojure for making sweet web apis)
  - Schema (input and output validation and coercion)
  - Swagger (api documentation via ring-swagger)
  - Friendlier routing
+- Cheshire (JSON serializaton) 
+- Monger (MongoDB library)
 
 ## Usage
 
