@@ -4,13 +4,16 @@
             [schema.core :as s]
             [compojure-api-example-clj.core :as core]
             [compojure-api-example-clj.post :as post :refer :all]
-            [cheshire.generate :refer [add-encoder encode-str]]))
+            [cheshire.generate :refer [add-encoder encode-str]]
+            [compojure-api-example-clj.auth.session :refer [wrap-app-session]]
+            [compojure-api-example-clj.auth.access :as access]
+             compojure-api-example-clj.auth.restructure))
 
 (add-encoder org.bson.types.ObjectId encode-str)
 
 (s/defschema Message {:message String})
 
-(defapi app
+(defapi app'
   (middlewares [core/wrap-exception-handling]
   (swagger-ui)
   (swagger-docs
@@ -25,6 +28,10 @@
     :tags ["_hello"]
 
     (GET* "/" []
+      :summary "say hello world"
+      (ok "Hello World"))
+
+    (GET* "/Helo-with-return-type" []
       :return Message
       :summary "say hello world"
       (ok {:message "Hello World"})))
@@ -71,4 +78,26 @@
     :tags ["exception"]
 
     (GET* "/boom" [] 
-      (throw (RuntimeException. "Something blew up"))))))  
+      (throw (RuntimeException. "Something blew up"))))
+
+  (context* "/auth" []
+    :tags ["zAuth"]
+
+  (POST* "/login" []
+    (assoc-in (ok) [:session :identity] {:_id 1, :username "juho"}))
+  
+  (POST* "/logout" []
+    (assoc-in (ok) [:session :identity] nil))
+
+  (GET* "/foo" []
+    :auth-rules access/authenticated
+    :current-user user
+    (ok user)))))  
+
+(def app
+  (-> app'
+      wrap-app-session))
+
+
+
+
